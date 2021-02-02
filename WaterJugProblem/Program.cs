@@ -12,8 +12,6 @@ namespace WaterJugProblem
             var problem = new JugProblem(m, n);
 
             problem.Solve();
-
-            problem.TransferWater(problem.J1, problem.J2);
         }
     }
 }
