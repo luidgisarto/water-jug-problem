@@ -34,34 +34,49 @@ namespace WaterJugProblem.Model
             EnqueuePath(0);
         }
 
-        public void EnqueuePath(int ruleNumber)
-        {
-            _path.Push(_currentState);
-            _visitedStates.Add(_currentState);
-            _currentState = new JugState(ruleNumber, J1, J2);
-            Console.WriteLine($"{ruleNumber} => ({J1.Current}, {J2.Current})");
-        }
-
+        /// <summary>
+        /// Apply rule sequences to solve Jug water problem
+        /// </summary>
+        /// <returns>A boolean indicating wheter solution was achieved or not</returns>
         public bool Solve()
         {
             while(_currentState.j1.Current != 4)
             {
-                if (!ApplyRule())
-                    BacktrackRule();
+                if (!ApplyRules())
+                {
+                    if(!BacktrackRule())
+                    {
+                        return false;
+                    }
+                }
             }
+
             return true;
         }
 
-        private void BacktrackRule()
+        /// <summary>
+        /// Get the size of tree generated in solution excluding root at the count
+        /// </summary>
+        /// <returns>An <see cref="int"/> representing the depth</returns>
+        public int GetSolutionDepth()
         {
-            _visitedStates.Add(_currentState);
-            _currentState = _path.Pop();
-            J1 = (Jug)_currentState.j1.Clone();
-            J2 = (Jug)_currentState.j2.Clone();
-            Console.WriteLine($"BT => ({_currentState.j1.Current}, {_currentState.j2.Current})");
+            return _path.Count - 1;
         }
 
-        public bool ApplyRule()
+        /// <summary>
+        /// Get the number of visited nodes in solution process
+        /// </summary>
+        /// <returns>An <see cref="int"/> representing the number</returns>
+        public int GetVisitedNodesNumber()
+        {
+            return _visitedStates.Count - 1;
+        }
+        
+        /// <summary>
+        /// Apply rules
+        /// </summary>
+        /// <returns>A <see cref="bool"/> denoting if any solution was applied in current state</returns>
+        bool ApplyRules()
         {
             var hasSuccess = false;
 
@@ -87,14 +102,32 @@ namespace WaterJugProblem.Model
 
             return hasSuccess;
         }
-
-        public bool CheckAlreadyVisited()
+        
+        /// <summary>
+        /// Backtrack for last state to try apply another rule.
+        /// </summary>
+        /// <returns>A <see cref="bool"/> denoting if backtracking was sucedeed</returns>
+        bool BacktrackRule()
         {
-            return _visitedStates.Any(item => item.j1.Current == J1.Current
-                   && item.j2.Current == J2.Current);
+            if (_path.Count == 0)
+                return false;
+
+            _visitedStates.Add(_currentState);
+            _currentState = _path.Pop();
+            J1 = (Jug)_currentState.j1.Clone();
+            J2 = (Jug)_currentState.j2.Clone();
+            Console.WriteLine($"BT => ({_currentState.j1.Current}, {_currentState.j2.Current})");
+
+            return true;
         }
 
-        public bool TransferWater(Jug current, Jug destination)
+        /// <summary>
+        /// Transfer water from current <see cref="Jug"/> to destination <see cref="Jug"/>
+        /// </summary>
+        /// <param name="current">The current jug</param>
+        /// <param name="destination">The destination jug</param>
+        /// <returns>A <see cref="bool"/> denoting if this rule was applied</returns>
+        bool TransferWater(Jug current, Jug destination)
         {
             if (current.IsEmpty() || destination.IsFull())
                 return false;
@@ -105,6 +138,28 @@ namespace WaterJugProblem.Model
             destination.UpdateContent(amount);
 
             return true;
+        }
+
+        /// <summary>
+        /// Enqueue current solution path
+        /// </summary>
+        /// <param name="ruleNumber">The number of applied rule</param>
+        void EnqueuePath(int ruleNumber)
+        {
+            _path.Push(_currentState);
+            _visitedStates.Add(_currentState);
+            _currentState = new JugState(ruleNumber, J1, J2);
+            Console.WriteLine($"{ruleNumber} => ({J1.Current}, {J2.Current})");
+        }
+        
+        /// <summary>
+        /// Checks if this state already happened
+        /// </summary>
+        /// <returns>A <see cref="bool"/> denoting if this state already happened</returns>
+        bool CheckAlreadyVisited()
+        {
+            return _visitedStates.Any(item => item.j1.Current == J1.Current
+                   && item.j2.Current == J2.Current);
         }
     }
 }
