@@ -1,0 +1,13 @@
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.exe
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.deps.json
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.runtimeconfig.json
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.runtimeconfig.dev.json
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.dll
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\bin\Debug\netcoreapp3.1\WaterJugProblem.pdb
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.csprojAssemblyReference.cache
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.AssemblyInfoInputs.cache
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.AssemblyInfo.cs
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.csproj.CoreCompileInputs.cache
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.dll
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.pdb
+C:\Users\luidg\source\repos\WaterJugProblem\WaterJugProblem\obj\Debug\netcoreapp3.1\WaterJugProblem.genruntimeconfig.cache
