@@ -13,7 +13,7 @@ namespace WaterJugProblem
 
             problem.Solve();
 
-            problem.TransferWater(problem.j1, problem.j2);
+            problem.TransferWater(problem.J1, problem.J2);
         }
     }
 }
