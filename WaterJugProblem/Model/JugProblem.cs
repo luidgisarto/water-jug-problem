@@ -6,8 +6,8 @@ namespace WaterJugProblem.Model
 {
     public class JugProblem
     {
+        readonly List<JugState> _visitedStates = new List<JugState>();
         readonly Stack<JugState> _path = new Stack<JugState>();
-        readonly Stack<Tuple<Jug, Jug>> _previousState = new Stack<Tuple<Jug, Jug>>();
         readonly Dictionary<int, Func<Jug, Jug, bool>> _rules;
 
         JugState _currentState;
@@ -19,12 +19,12 @@ namespace WaterJugProblem.Model
 
             _rules = new Dictionary<int, Func<Jug, Jug, bool>>
             {
-                { 1, (current, destination) => current.FillJug() },
-                { 2, (current, destination) => destination.FillJug() },
-                { 3, (current, destination) => current.EmptyJug() },
                 { 4, (current, destination) => destination.EmptyJug() },
+                { 3, (current, destination) => current.EmptyJug() },
+                { 6, (current, destination) => TransferWater(destination, current) },
+                { 2, (current, destination) => destination.FillJug() },
+                { 1, (current, destination) => current.FillJug() },
                 { 5, (current, destination) => TransferWater(current, destination) },
-                { 6, (current, destination) => TransferWater(destination, current) }
             };
 
             EnqueuePath(0);
@@ -34,6 +34,7 @@ namespace WaterJugProblem.Model
         {
             _currentState = new JugState(ruleNumber, j1, j2);
             _path.Push(_currentState);
+            _visitedStates.Add(_currentState);
             Console.WriteLine($"{ruleNumber} => ({j1.Current}, {j2.Current})");
         }
 
@@ -43,7 +44,7 @@ namespace WaterJugProblem.Model
 
         public bool Solve()
         {
-            while(j2.Current != 4)
+            while(j1.Current != 4)
             {
                 if (!ApplyRule())
                     BacktrackRule();
@@ -62,32 +63,32 @@ namespace WaterJugProblem.Model
 
             foreach(var rule in _rules)
             {
-                _previousState.Push(Tuple.Create((Jug)j1.Clone(), (Jug)j2.Clone()));
 
-                var a = rule.Value(j1, j2);
-                var b = StateAlreadyExists();
-                hasSuccess = a && !b;
-                
+                var j1ant = (Jug)j1.Clone();
+                var j2ant = (Jug)j2.Clone();
+
+                var hasSucces = rule.Value(j1, j2);
+
+                var a = !_visitedStates.Any(item => item.j1.Current == j1.Current
+                    && item.j2.Current == j2.Current);
+
+                //var b = !_currentState.AppliedRule.Contains(rule.Key);
+
+                hasSuccess = a && hasSucces;
+
                 if (hasSuccess)
                 {
                     EnqueuePath(rule.Key);
-                    break;
+                    break;   
                 }
                 else
                 {
-                    var previous = _previousState.Pop();
-                    j1 = previous.Item1;
-                    j2 = previous.Item2;
+                    j1 = j1ant;
+                    j2 = j2ant;
                 }
             }
 
             return hasSuccess;
-        }
-
-        private bool StateAlreadyExists()
-        {
-            return _path.Any(item => item.j1.Current == j1.Current 
-                && item.j2.Current == j2.Current);
         }
 
         public bool TransferWater(Jug current, Jug destination)
