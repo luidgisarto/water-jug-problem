@@ -1,6 +1,8 @@
-﻿namespace WaterJugProblem.Model
+﻿using System;
+
+namespace WaterJugProblem.Model
 {
-    public class Jug
+    public class Jug : ICloneable
     {
         public Jug(int capacity)
         {
@@ -37,14 +39,31 @@
 
         public bool FillJug()
         {
-            Current = Capacity;
-            return true;
+            if(EmptySpace > 0)
+            {
+                Current = Capacity;
+                return true;
+            }
+
+            return false;
         }
 
         public bool EmptyJug()
         {
-            Current = 0;
-            return true;
+            if(Current > 0)
+            {
+                Current = 0;
+                return true;
+            }
+
+            return false;
+        }
+
+        public object Clone()
+        {
+            var newJug = new Jug(Capacity);
+            newJug.UpdateContent(Current);
+            return newJug;
         }
     }
 }
