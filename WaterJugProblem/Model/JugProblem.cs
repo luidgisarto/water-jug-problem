@@ -79,9 +79,9 @@ namespace WaterJugProblem.Model
         /// <returns>A boolean indicating wheter solution was achieved or not</returns>
         public bool Solve()
         {
+            Console.WriteLine($"\nOrdem das Regras: [R{string.Join(", R", _rulesOrder.Select(x => x))}]\n");
+            
             EnqueuePath(0);
-
-            Console.WriteLine($"\nOrdem das Regras: [R{string.Join(", R", _rulesOrder.Select(x => x))}]");
 
             while (_currentState.j1.Current != 4)
             {
@@ -89,11 +89,13 @@ namespace WaterJugProblem.Model
                 {
                     if (!BacktrackRule())
                     {
+                        Console.WriteLine("\n[RESULTADO]: Não foi encontrada solução para o problema");
                         return false;
                     }
                 }
             }
 
+            Console.WriteLine($"\n[RESULTADO]: A solução atingiu nível {GetSolutionDepth()} e visitou {GetVisitedNodesNumber()} nós");
             return true;
         }
 
