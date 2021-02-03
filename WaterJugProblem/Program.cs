@@ -36,47 +36,57 @@ namespace WaterJugProblem
                 key = Convert.ToInt32(inputKey);
             }
 
-            var problem = new JugProblem(m, n);
+            var sortType = SortType.Asc;
+            int[] userSort = null;
 
-            SortType sortType = SortType.Asc;
-
-            if (key == 4)
+            switch (key)
             {
-                var rules = JugProblem.GetRules();
-                Console.WriteLine($"\nRegras:\n{string.Join("\n", rules)}");
-
-                Console.WriteLine("\nInforme a ordem de aplicação das regras separadas por vírgula");
-                var rulesUser = Console.ReadLine();
-
-                var sortOrder = rulesUser.Split(",").ToList().Select(x => Convert.ToInt32(x.Replace("R", "").Trim())).ToArray();
-
-                problem.SetSort(SortType.User, sortOrder);
-
-                problem.Solve();
-            }
-            else
-            {
-                if (key == 1)
+                case 1:
                 {
                     sortType = SortType.Asc;
-                }
-                else if (key == 2)
+                } break;
+                case 2:
                 {
                     sortType = SortType.Desc;
-                }
-                else if (key == 3)
+                } break;
+                case 3:
                 {
                     sortType = SortType.Random;
-                }
-
-                for (int i = 0; i < 1; i++)
+                } break;
+                case 4:
                 {
+                    sortType = SortType.User;
+                    var rules = JugProblem.GetRules();
+
+                    Console.WriteLine($"\nRegras:\n{string.Join("\n", rules)}");
+                    Console.WriteLine("\nInforme a ordem de aplicação das regras separadas por vírgula");
+
+                    var rulesUser = Console.ReadLine();
+
+                    userSort = rulesUser.Split(",").Select(x => Convert.ToInt32(x.Replace("R", "").Trim())).ToArray();
+                } break;
+            }
+
+            if(key >= 1 && key <= 3)
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    var problem = new JugProblem(m, n);
+
                     problem.SetSort(sortType);
 
                     problem.Solve();
                 }
             }
-        }
+            else
+            {
+                var problem = new JugProblem(m, n);
+
+                problem.SetSort(sortType, userSort);
+
+                problem.Solve();
+            }
+        } 
     }
 
     public enum SortType
