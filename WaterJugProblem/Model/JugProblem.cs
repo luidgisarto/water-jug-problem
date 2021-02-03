@@ -9,29 +9,68 @@ namespace WaterJugProblem.Model
         Jug J2;
         Jug J1;
         JugState _currentState;
-     
+
         readonly List<JugState> _visitedStates = new List<JugState>();
         readonly Stack<JugState> _path = new Stack<JugState>();
         readonly Dictionary<int, Func<Jug, Jug, bool>> _rules;
+        static readonly Dictionary<int, string> _rulesInfo = new Dictionary<int, string>
+            {
+                { 0, "R0 - Estado Inicial"},
+                { 1, "R1 - Encher Jarro Maior"},
+                { 2, "R2 - Encher Jarro Menor"},
+                { 3, "R3 - Esvaziar Jarro Maior"},
+                { 4, "R4 - Esvaziar Jarro Menor"},
+                { 5, "R5 - Transferir água do Jarro Maior para o Jarro Menor"},
+                { 6, "R6 - Transferir água do Jarro Menor para o Jarro Maior"}
+            };
+        int[] _rulesOrder = new int[6] { 1, 2, 3, 4, 5, 6 };
 
         public JugProblem(int m, int n)
         {
             J1 = new Jug(m);
             J2 = new Jug(n);
 
+            SetSort(SortType.Asc);
+
             _rules = new Dictionary<int, Func<Jug, Jug, bool>>
             {
-                { 4, (current, destination) => destination.EmptyJug() },
-                { 3, (current, destination) => current.EmptyJug() },
-                { 6, (current, destination) => TransferWater(destination, current) },
-                { 2, (current, destination) => destination.FillJug() },
                 { 1, (current, destination) => current.FillJug() },
+                { 2, (current, destination) => destination.FillJug() },
+                { 3, (current, destination) => current.EmptyJug() },
+                { 4, (current, destination) => destination.EmptyJug() },
                 { 5, (current, destination) => TransferWater(current, destination) },
+                { 6, (current, destination) => TransferWater(destination, current) },
             };
 
             _currentState = new JugState(0, J1, J2);
+        }
 
-            EnqueuePath(0);
+        public void SetSort(SortType sortType = SortType.Asc, int[] sortOrder = null)
+        {
+            if (sortType == SortType.Asc)
+            {
+                _rulesOrder = _rulesOrder.OrderBy(x => x).ToArray();
+            }
+            else if (sortType == SortType.Desc)
+            {
+                _rulesOrder = _rulesOrder.OrderByDescending(x => x).ToArray();
+            }
+            else if (sortType == SortType.Random)
+            {
+                var random = new Random();
+                random.Shuffle(_rulesOrder);
+            }
+            else if(sortType == SortType.User)
+            {
+                _rulesOrder = sortOrder;
+            }
+        }
+
+        public static List<string> GetRules()
+        {
+            return _rulesInfo
+                .Skip(1)
+                .Select(x => x.Value).ToList();
         }
 
         /// <summary>
@@ -40,11 +79,15 @@ namespace WaterJugProblem.Model
         /// <returns>A boolean indicating wheter solution was achieved or not</returns>
         public bool Solve()
         {
-            while(_currentState.j1.Current != 4)
+            EnqueuePath(0);
+
+            Console.WriteLine($"\nOrdem das Regras: [R{string.Join(", R", _rulesOrder.Select(x => x))}]");
+
+            while (_currentState.j1.Current != 4)
             {
                 if (!ApplyRules())
                 {
-                    if(!BacktrackRule())
+                    if (!BacktrackRule())
                     {
                         return false;
                     }
@@ -71,7 +114,7 @@ namespace WaterJugProblem.Model
         {
             return _visitedStates.Count - 1;
         }
-        
+
         /// <summary>
         /// Apply rules
         /// </summary>
@@ -80,9 +123,11 @@ namespace WaterJugProblem.Model
         {
             var hasSuccess = false;
 
-            foreach(var rule in _rules)
+            foreach (var ruleNumber in _rulesOrder)
             {
-                var ruleWasApplied = rule.Value(J1, J2);
+                var rule = _rules[ruleNumber];
+
+                var ruleWasApplied = rule(J1, J2);
 
                 var alreadyVisited = CheckAlreadyVisited();
 
@@ -90,8 +135,8 @@ namespace WaterJugProblem.Model
 
                 if (hasSuccess)
                 {
-                    EnqueuePath(rule.Key);
-                    break;   
+                    EnqueuePath(ruleNumber);
+                    break;
                 }
                 else
                 {
@@ -102,7 +147,7 @@ namespace WaterJugProblem.Model
 
             return hasSuccess;
         }
-        
+
         /// <summary>
         /// Backtrack for last state to try apply another rule.
         /// </summary>
@@ -116,7 +161,9 @@ namespace WaterJugProblem.Model
             _currentState = _path.Pop();
             J1 = (Jug)_currentState.j1.Clone();
             J2 = (Jug)_currentState.j2.Clone();
-            Console.WriteLine($"BT => ({_currentState.j1.Current}, {_currentState.j2.Current})");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"({_currentState.j1.Current}, {_currentState.j2.Current}) => BT - Backtracking");
+            Console.ResetColor();
 
             return true;
         }
@@ -149,9 +196,9 @@ namespace WaterJugProblem.Model
             _path.Push(_currentState);
             _visitedStates.Add(_currentState);
             _currentState = new JugState(ruleNumber, J1, J2);
-            Console.WriteLine($"{ruleNumber} => ({J1.Current}, {J2.Current})");
+            Console.WriteLine($"({J1.Current}, {J2.Current}) => {_rulesInfo[ruleNumber]}");
         }
-        
+
         /// <summary>
         /// Checks if this state already happened
         /// </summary>
