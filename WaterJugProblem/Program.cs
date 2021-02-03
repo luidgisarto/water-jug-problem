@@ -13,6 +13,15 @@ namespace WaterJugProblem
 
             var key = -1;
 
+            Console.WriteLine("\n");
+
+            Console.WriteLine("TRABALHO DE INTELIGÊNCIA ARTIFICIAL\n ");
+            Console.WriteLine("SOLUÇÃO DO PROBLEMA DE JARROS DE ÁGUA\n");
+            Console.WriteLine("201276007 / DOUGLAS BAUMGRATZ DE CARVALHO");
+            Console.WriteLine("201376082 / JÚLIO CESAR ROSA TRINDADE");
+            Console.WriteLine("201176023 / LUIDGI SARTO LACERDA");
+            Console.WriteLine("201276030 / OTÁVIO AUGUSTO FERREIRA RODRIGUES\n");
+
             while (key == -1 || key > 4 || key < 1)
             {
                 Console.WriteLine("Informe o critério de escolha das regras\n");
@@ -42,7 +51,7 @@ namespace WaterJugProblem
                 var sortOrder = rulesUser.Split(",").ToList().Select(x => Convert.ToInt32(x.Replace("R", "").Trim())).ToArray();
 
                 problem.SetSort(SortType.User, sortOrder);
-                
+
                 problem.Solve();
             }
             else
@@ -60,7 +69,7 @@ namespace WaterJugProblem
                     sortType = SortType.Random;
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     problem.SetSort(sortType);
 
