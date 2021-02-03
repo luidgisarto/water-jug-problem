@@ -54,7 +54,7 @@ namespace WaterJugProblem
 
                     var rulesUser = Console.ReadLine();
 
-                    userSort = rulesUser.Split(",").ToList().Select(x => Convert.ToInt32(x.Replace("R", "").Trim())).ToArray();
+                    userSort = rulesUser.Split(",").Select(x => Convert.ToInt32(x.Replace("R", "").Trim())).ToArray();
                 } break;
             }
 
