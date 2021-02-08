@@ -67,7 +67,7 @@ namespace WaterJugProblem
                 } break;
             }
 
-            if(key >= 1 && key <= 3)
+            if(key == 3)
             {
                 for (int i = 0; i < 50; i++)
                 {
