@@ -9,21 +9,21 @@ namespace WaterJugProblem.Model
         Jug J2;
         Jug J1;
         JugState _currentState;
+        int[] _rulesOrder = new int[6] { 1, 2, 3, 4, 5, 6 };
 
         readonly List<JugState> _visitedStates = new List<JugState>();
         readonly Stack<JugState> _path = new Stack<JugState>();
         readonly Dictionary<int, Func<Jug, Jug, bool>> _rules;
         static readonly Dictionary<int, string> _rulesInfo = new Dictionary<int, string>
-            {
-                { 0, "R0 - Estado Inicial"},
-                { 1, "R1 - Encher Jarro Maior"},
-                { 2, "R2 - Encher Jarro Menor"},
-                { 3, "R3 - Esvaziar Jarro Maior"},
-                { 4, "R4 - Esvaziar Jarro Menor"},
-                { 5, "R5 - Transferir água do Jarro Maior para o Jarro Menor"},
-                { 6, "R6 - Transferir água do Jarro Menor para o Jarro Maior"}
-            };
-        int[] _rulesOrder = new int[6] { 1, 2, 3, 4, 5, 6 };
+        {
+            { 0, "R0 - Estado Inicial"},
+            { 1, "R1 - Encher Jarro Maior"},
+            { 2, "R2 - Encher Jarro Menor"},
+            { 3, "R3 - Esvaziar Jarro Maior"},
+            { 4, "R4 - Esvaziar Jarro Menor"},
+            { 5, "R5 - Transferir água do Jarro Maior para o Jarro Menor"},
+            { 6, "R6 - Transferir água do Jarro Menor para o Jarro Maior"}
+        };
 
         public JugProblem(int m, int n)
         {
@@ -83,7 +83,7 @@ namespace WaterJugProblem.Model
             
             EnqueuePath(0);
 
-            while (_currentState.j1.Current != 4)
+            while (_currentState.J1.Current != 4)
             {
                 if (!ApplyRules())
                 {
@@ -114,7 +114,7 @@ namespace WaterJugProblem.Model
         /// <returns>An <see cref="int"/> representing the number</returns>
         public int GetVisitedNodesNumber()
         {
-            return _visitedStates.Count - 1;
+            return _visitedStates.Distinct().Count() - 1;
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace WaterJugProblem.Model
                 }
                 else
                 {
-                    J1 = (Jug)_currentState.j1.Clone();
-                    J2 = (Jug)_currentState.j2.Clone();
+                    J1 = (Jug)_currentState.J1.Clone();
+                    J2 = (Jug)_currentState.J2.Clone();
                 }
             }
 
@@ -161,10 +161,10 @@ namespace WaterJugProblem.Model
 
             _visitedStates.Add(_currentState);
             _currentState = _path.Pop();
-            J1 = (Jug)_currentState.j1.Clone();
-            J2 = (Jug)_currentState.j2.Clone();
+            J1 = (Jug)_currentState.J1.Clone();
+            J2 = (Jug)_currentState.J2.Clone();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"({_currentState.j1.Current}, {_currentState.j2.Current}) => BT - Backtracking");
+            Console.WriteLine($"({_currentState.J1.Current}, {_currentState.J2.Current}) => BT - Backtracking");
             Console.ResetColor();
 
             return true;
@@ -207,8 +207,8 @@ namespace WaterJugProblem.Model
         /// <returns>A <see cref="bool"/> denoting if this state already happened</returns>
         bool CheckAlreadyVisited()
         {
-            return _visitedStates.Any(item => item.j1.Current == J1.Current
-                   && item.j2.Current == J2.Current);
+            return _visitedStates.Any(item => item.J1.Current == J1.Current
+                   && item.J2.Current == J2.Current);
         }
     }
 }

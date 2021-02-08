@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace WaterJugProblem.Model
 {
@@ -13,12 +11,22 @@ namespace WaterJugProblem.Model
                 ruleNumber
             };
 
-            j1 = (Jug)jug1.Clone();
-            j2 = (Jug)jug2.Clone();
+            J1 = (Jug)jug1.Clone();
+            J2 = (Jug)jug2.Clone();
         }
 
-        public Jug j1 { get; set; }
-        public Jug j2 { get; set; }
+        public Jug J1 { get; set; }
+        public Jug J2 { get; set; }
         public List<int> AppliedRule { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is JugState)
+            {
+                var compare = (JugState)obj;
+                return compare.J1.Current == J1.Current && compare.J2.Current == J2.Current;
+            }
+            return false;
+        }
     }
 }
