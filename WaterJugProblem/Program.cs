@@ -22,7 +22,7 @@ namespace WaterJugProblem
             Console.WriteLine("201176023 / LUIDGI SARTO LACERDA");
             Console.WriteLine("201276030 / OTÁVIO AUGUSTO FERREIRA RODRIGUES\n");
 
-            while (key == -1 || key > 4 || key < 1)
+            while (key == -1 || key > 5 || key < 1)
             {
                 Console.WriteLine("Informe o critério de escolha das regras\n");
 
@@ -30,6 +30,7 @@ namespace WaterJugProblem
                 Console.WriteLine("2 - Decrescente");
                 Console.WriteLine("3 - Randômico");
                 Console.WriteLine("4 - Informado pelo usuário");
+                Console.WriteLine("5 - Guloso");
 
                 var inputKey = Console.ReadLine();
 
@@ -78,11 +79,17 @@ namespace WaterJugProblem
                     problem.Solve();
                 }
             }
-            else
+            else if(key < 5)
             {
                 var problem = new JugProblem(m, n);
 
                 problem.SetSort(sortType, userSort);
+
+                problem.Solve();
+            }
+            else
+            {
+                var problem = new JugProblemGuloso(m, n);
 
                 problem.Solve();
             }

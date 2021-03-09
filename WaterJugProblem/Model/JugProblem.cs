@@ -32,15 +32,7 @@ namespace WaterJugProblem.Model
 
             SetSort(SortType.Asc);
 
-            _rules = new Dictionary<int, Func<Jug, Jug, bool>>
-            {
-                { 1, (current, destination) => current.FillJug() },
-                { 2, (current, destination) => destination.FillJug() },
-                { 3, (current, destination) => current.EmptyJug() },
-                { 4, (current, destination) => destination.EmptyJug() },
-                { 5, (current, destination) => TransferWater(current, destination) },
-                { 6, (current, destination) => TransferWater(destination, current) },
-            };
+            _rules = Jug.GetTransferRules();
 
             _currentState = new JugState(0, J1, J2);
         }
@@ -166,25 +158,6 @@ namespace WaterJugProblem.Model
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"({_currentState.J1.Current}, {_currentState.J2.Current}) => BT - Backtracking");
             Console.ResetColor();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Transfer water from current <see cref="Jug"/> to destination <see cref="Jug"/>
-        /// </summary>
-        /// <param name="current">The current jug</param>
-        /// <param name="destination">The destination jug</param>
-        /// <returns>A <see cref="bool"/> denoting if this rule was applied</returns>
-        bool TransferWater(Jug current, Jug destination)
-        {
-            if (current.IsEmpty() || destination.IsFull())
-                return false;
-
-            var amount = Math.Min(current.Current, destination.EmptySpace);
-
-            current.UpdateContent(-amount);
-            destination.UpdateContent(amount);
 
             return true;
         }

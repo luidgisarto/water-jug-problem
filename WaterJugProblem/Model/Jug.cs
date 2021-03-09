@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WaterJugProblem.Model
 {
@@ -39,7 +40,7 @@ namespace WaterJugProblem.Model
 
         public bool FillJug()
         {
-            if(EmptySpace > 0)
+            if (EmptySpace > 0)
             {
                 Current = Capacity;
                 return true;
@@ -48,15 +49,47 @@ namespace WaterJugProblem.Model
             return false;
         }
 
+        /// <summary>
+        /// Transfer water from current <see cref="Jug"/> to destination <see cref="Jug"/>
+        /// </summary>
+        /// <param name="current">The current jug</param>
+        /// <param name="destination">The destination jug</param>
+        /// <returns>A <see cref="bool"/> denoting if this rule was applied</returns>
         public bool EmptyJug()
         {
-            if(Current > 0)
+            if (Current > 0)
             {
                 Current = 0;
                 return true;
             }
 
             return false;
+        }
+
+        public static bool TransferWater(Jug current, Jug destination)
+        {
+            if (current.IsEmpty() || destination.IsFull())
+                return false;
+
+            var amount = Math.Min(current.Current, destination.EmptySpace);
+
+            current.UpdateContent(-amount);
+            destination.UpdateContent(amount);
+
+            return true;
+        }
+
+        public static Dictionary<int, Func<Jug, Jug, bool>> GetTransferRules(){
+
+            return new Dictionary<int, Func<Jug, Jug, bool>>
+            {
+                { 1, (current, destination) => current.FillJug() },
+                { 2, (current, destination) => destination.FillJug() },
+                { 3, (current, destination) => current.EmptyJug() },
+                { 4, (current, destination) => destination.EmptyJug() },
+                { 5, (current, destination) => TransferWater(current, destination) },
+                { 6, (current, destination) => TransferWater(destination, current) },
+            };
         }
 
         public object Clone()
