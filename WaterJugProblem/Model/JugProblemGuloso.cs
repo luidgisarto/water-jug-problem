@@ -10,10 +10,10 @@ namespace WaterJugProblem.Model
     {
         Jug _j1;
         Jug _j2;
+        JugPath _currentPath;
 
         List<JugPath> _open;
         readonly List<JugPath> _close;
-        readonly Stack<JugPath> _path;
 
         public JugProblemGuloso(int capacity1, int capacity2)
         {
@@ -21,30 +21,20 @@ namespace WaterJugProblem.Model
             _j2 = new Jug(capacity2);
             _open = new List<JugPath>();
             _close = new List<JugPath>();
-            _path = new Stack<JugPath>();
 
-            CreateNewJugPath(_j1, _j2, 0, 0);
+            CreateNewJugPath(_j1, _j2, 0);
         }
 
-        public void CreateNewJugPath(Jug j1, Jug j2, int depth, int count)
+        public void CreateNewJugPath(Jug j1, Jug j2, int count)
         {
-            var step1 = new JugPath(j1, j2, depth, count);
-
-            _close.Add(step1);
+            _currentPath = new JugPath(j1, j2, count);
+          
+            _close.Add(_currentPath);
 
             Console.WriteLine("Fechados: {0}",
                 string.Join(",",
                     _close.Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
                 )
-            );
-
-            _path.Push(step1);
-
-            Console.WriteLine("Caminho: {0}{1}",
-                string.Join(",",
-                    _path.OrderBy(item => item.Depth).Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
-                ),
-                Environment.NewLine
             );
         }
 
@@ -52,16 +42,22 @@ namespace WaterJugProblem.Model
         {
             foreach(var rule in Jug.GetTransferRules())
             {
-                var jugClone1 = (Jug)_j1.Clone();
-                var jugClone2 = (Jug)_j2.Clone();
+                JugPath jugPath;
+                var jugClone1 = (Jug)_currentPath.J1.Clone();
+                var jugClone2 = (Jug)_currentPath.J2.Clone();
 
                 if(rule.Value(jugClone1, jugClone2))
                 {
-                    if (!_path.Any(item => item.J1.Current == jugClone1.Current &&
+                    jugPath = new JugPath(jugClone1, jugClone2, _open.Count)
+                    {
+                        Anterior = _currentPath
+                    };
+
+                    if (!jugPath.Paths.Any(item => item.J1.Current == jugClone1.Current &&
                          item.J2.Current == jugClone2.Current)
                     )
                     {
-                        _open.Add(new JugPath(jugClone1, jugClone2, _path.Count - 1, _open.Count));
+                        _open.Add(jugPath);
                     }
                 }
             }
@@ -82,35 +78,42 @@ namespace WaterJugProblem.Model
 
         public void Solve()
         {
-            while(_j1.Current != 4)
+            while(_currentPath.J1.Current != 4)
             {
                 PopulateOpenList();
                 ApplyRule();
             }
+
+           
+            Console.WriteLine("=> Caminho solução: {0}",
+                string.Join(",",
+                   _currentPath.Paths.Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
+                )
+            );
         }
 
         private void ApplyRule()
         {
-            var firstElement = _open.First(item => !_path.Any(
+            var firstElement = _open.First(item => !item.Paths.Any(
                 item2 => item2.J1.Current == item.J1.Current && item2.J2.Current == item.J2.Current)
             );
 
             _open.Remove(firstElement);
             
-            _j1 = firstElement.J1;
-            _j2 = firstElement.J2;
+            //if(_currentPath.J1.Current == 4)
+            //{
 
-            VerifyPath(firstElement);
+            //}
 
-            CreateNewJugPath(firstElement.J1, firstElement.J2, _path.Count, firstElement.Order);
-        }
+            _currentPath = firstElement;
 
-        private void VerifyPath(JugPath path)
-        {
-            while (path.Depth < _path.Count - 1)
-            {
-                _path.Pop();
-            }
+            _close.Add(_currentPath);
+
+            Console.WriteLine("Fechados: {0}",
+                string.Join(",",
+                    _close.Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
+                )
+            );
         }
     }
 }
