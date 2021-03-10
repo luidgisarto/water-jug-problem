@@ -31,7 +31,21 @@ namespace WaterJugProblem.Model
             var step1 = new JugPath(j1, j2, depth, count);
 
             _close.Add(step1);
+
+            Console.WriteLine("Fechados: {0}",
+                string.Join(",",
+                    _close.Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
+                )
+            );
+
             _path.Push(step1);
+
+            Console.WriteLine("Caminho: {0}{1}",
+                string.Join(",",
+                    _path.OrderBy(item => item.Depth).Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
+                ),
+                Environment.NewLine
+            );
         }
 
         public void PopulateOpenList()
@@ -51,6 +65,14 @@ namespace WaterJugProblem.Model
                     }
                 }
             }
+
+            OrderOpenList();
+
+            Console.WriteLine("Abertos gerados ordenados: {0}",
+                string.Join(",",
+                    _open.Select(item => $"({item.J1.Current}, {item.J2.Current} [{item.Order}])")
+                )
+            );
         }
 
         public void OrderOpenList()
@@ -63,42 +85,24 @@ namespace WaterJugProblem.Model
             while(_j1.Current != 4)
             {
                 PopulateOpenList();
-                OrderOpenList();
-
-                Console.WriteLine("Abertos: {0}", 
-                    string.Join(",", 
-                        _open.Select(item => $"({item.J1.Current}, {item.J2.Current})")
-                    )
-                );
-
                 ApplyRule();
-
-                Console.WriteLine("Fechados: {0}",
-                    string.Join(",",
-                        _close.Select(item => $"({item.J1.Current}, {item.J2.Current})")
-                    )
-                );
-
-                Console.WriteLine("Caminho: {0}{1}",
-                    string.Join(",",
-                        _path.Select(item => $"({item.J1.Current}, {item.J2.Current})")
-                    ), 
-                    Environment.NewLine
-                );
             }
         }
 
         private void ApplyRule()
         {
-            var firsElement = _open.ElementAt(0);
-            _open.RemoveAt(0);
+            var firstElement = _open.First(item => !_path.Any(
+                item2 => item2.J1.Current == item.J1.Current && item2.J2.Current == item.J2.Current)
+            );
 
-            _j1 = firsElement.J1;
-            _j2 = firsElement.J2;
+            _open.Remove(firstElement);
+            
+            _j1 = firstElement.J1;
+            _j2 = firstElement.J2;
 
-            VerifyPath(firsElement);
+            VerifyPath(firstElement);
 
-            CreateNewJugPath(firsElement.J1, firsElement.J2, _path.Count, 0);
+            CreateNewJugPath(firstElement.J1, firstElement.J2, _path.Count, firstElement.Order);
         }
 
         private void VerifyPath(JugPath path)
