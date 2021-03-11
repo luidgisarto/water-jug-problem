@@ -91,7 +91,7 @@ namespace WaterJugProblem
             {
                 var problem = new JugProblemGuloso(m, n);
 
-                problem.Solve();
+                var json = problem.Solve();
             }
         } 
     }
